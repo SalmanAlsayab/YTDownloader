@@ -13,11 +13,6 @@ def list_formats(url):
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
-        
-        print(f"Available formats for: {info['title']}\n")
-        print(f"{'ID':<12} {'Extension':<10} {'Resolution':<15} {'Size'}")
-        print("-" * 60)
-        
         for fmt in info['formats']:
             filesize = fmt.get('filesize')
             if filesize and (fmt.get('ext') in wanted_ext):
@@ -28,8 +23,8 @@ def list_formats(url):
                     available_formats['ext'].append(fmt.get('ext', 'N/A'))
                     size_str = f"{filesize / 1024 / 1024:.1f} MB" if filesize else "N/A"
                     available_formats['size'].append(size_str)
-        # print(available_formats)
         
-        print(json.dumps(available_formats, indent=4))
-        
-list_formats("https://www.youtube.com/watch?v=Qa-7iWxDz1A")
+    return json.dumps(available_formats, indent=4)
+    
+if __name__=="__main__":    
+    print(list_formats("https://www.youtube.com/watch?v=Qa-7iWxDz1A"))
