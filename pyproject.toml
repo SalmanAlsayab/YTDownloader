@@ -5,7 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pytubefix>=10.9.0",
+    "fastapi>=0.136.3",
+    "pydantic>=2.13.4",
     "yt-dlp>=2026.3.17",
     "yt-dlp-ejs>=0.8.0",
 ]

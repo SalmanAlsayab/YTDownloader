@@ -1,37 +1,55 @@
-import yt_dlp 
+"""Module for extracting video metadata like thumbnails and titles from YouTube."""
+
+from typing import Dict, Any, Optional
+import yt_dlp
 import json
+from pydantic import BaseModel, Field
 
 
-def thumbnail_title(url):
-    video_info = {}
+class VideoMetadata(BaseModel):
+    """Pydantic model for video metadata."""
+    thumbnails: Optional[str] = Field(None, description="Thumbnail URL")
+    title: Optional[str] = Field(None, description="Video title")
 
-    # Configuration options
-    ydl_opts = {
-        'format': 'bestvideo+bestaudio/best',
-        # Saves file as 'Video Title.extension' in the current folder
-        'outtmpl': '%(title)s.%(ext)s',
-        'quiet': True,
-        'skip_download':True,
+
+def thumbnail_title(url: str) -> str:
+    """Extract thumbnail URL and title from a YouTube video.
+    
+    Args:
+        url: YouTube video URL
         
+    Returns:
+        JSON string containing video title and thumbnail URL
+    """
+    # Dictionary to store extracted video metadata
+    video_info: Dict[str, Any] = {}
+
+    # Configuration options for yt-dlp
+    ydl_opts: Dict[str, Any] = {
+        'format': 'bestvideo+bestaudio/best',
+        'outtmpl': '%(title)s.%(ext)s',  # Output filename template
+        'quiet': True,
+        'skip_download': True,  # Only extract info, don't download
         'extractor_args': {
             'youtube': {
-                'skip': ['dash', 'hls'],  # Skip DASH and HLS formats
-                'player_client': ['android'],  # Use Android client
+                'skip': ['dash', 'hls'],  # Skip DASH and HLS formats for faster extraction
+                'player_client': ['android'],  # Use Android client for better compatibility
             },
             'generic': {
-                'timeout': ['30'],  # Custom timeout
+                'timeout': ['30'],  # 30 second timeout for generic extractors
             }
         },
-        
     }
 
-    # Execute download
+    # Extract video information without downloading the file
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(video_url,download=False, ie_key='Youtube')
+        info: Dict[str, Any] = ydl.extract_info(url, download=False, ie_key='Youtube')
         video_info['thumbnails'] = info['thumbnail']
-        video_info['title'] = info['title']    
+        video_info['title'] = info['title']
+        
     return json.dumps(video_info, indent=4)
 
-if __name__=="__main__":
-    video_url = "https://www.youtube.com/watch?v=Qa-7iWxDz1A"
+if __name__ == "__main__":
+    # Example: Extract metadata from a YouTube video
+    video_url: str = "https://www.youtube.com/watch?v=Qa-7iWxDz1A"
     print(thumbnail_title(video_url))    
