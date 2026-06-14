@@ -21,3 +21,6 @@ package-dir = { "" = "src" }
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["youtube_video_downloader*"]
+
+[tool.setuptools.package-data]
+youtube_video_downloader = ["bin/*"]
