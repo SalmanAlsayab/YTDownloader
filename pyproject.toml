@@ -24,3 +24,6 @@ include = ["youtube_video_downloader*"]
 
 [tool.setuptools.package-data]
 youtube_video_downloader = ["bin/*"]
+
+[tool.fastapi]
+entrypoint = "src.youtube_video_downloader.main:app"

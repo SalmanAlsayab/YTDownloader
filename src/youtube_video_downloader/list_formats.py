@@ -15,7 +15,7 @@ class VideoFormat(BaseModel):
     size: List[str] = Field(description="File sizes in MB")
 
 
-async def list_formats(url: str) -> str:
+def list_formats(url: str) -> str:
     """Retrieve and list all available video formats for a given YouTube URL.
 
     Args:
@@ -59,7 +59,6 @@ async def list_formats(url: str) -> str:
                     available_formats["resolutions"].append(resolution)
                     available_formats["id"].append(fmt.get("format_id", "N/A"))
                     available_formats["ext"].append(fmt.get("ext", "N/A"))
-
                     # Convert filesize to MB
                     size_str: str = (
                         f"{filesize / 1024 / 1024:.1f} MB" if filesize else "N/A"

@@ -1,6 +1,6 @@
 """Module for extracting video metadata like thumbnails and titles from YouTube."""
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import json
 from pydantic import BaseModel, Field
 import yt_dlp
@@ -9,8 +9,8 @@ import yt_dlp
 class VideoMetadata(BaseModel):
     """Pydantic model for video metadata."""
 
-    thumbnails: Optional[str] = Field(None, description="Thumbnail URL")
-    title: Optional[str] = Field(None, description="Video title")
+    thumbnails: str = Field(None, description="Thumbnail URL")
+    title: str = Field(None, description="Video title")
 
 
 async def thumbnail_title(url: str) -> str:
@@ -22,8 +22,6 @@ async def thumbnail_title(url: str) -> str:
     Returns:
         JSON string containing video title and thumbnail URL
     """
-    # Dictionary to store extracted video metadata
-    video_info: Dict[str, Any] = {}
 
     # Configuration options for yt-dlp
     ydl_opts: Dict[str, Any] = {
@@ -50,10 +48,9 @@ async def thumbnail_title(url: str) -> str:
     # Extract video information without downloading the file
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info: Dict[str, Any] = ydl.extract_info(url, download=False, ie_key="Youtube")
-        video_info["thumbnails"] = info["thumbnail"]
-        video_info["title"] = info["title"]
+        meta_data = VideoMetadata(thumbnails=info["thumbnail"], title=info["title"])
 
-    return json.dumps(video_info, indent=4)
+    return json.dumps(dict(meta_data), indent=4)
 
 
 if __name__ == "__main__":
